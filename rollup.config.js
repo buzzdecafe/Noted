@@ -9,7 +9,8 @@ export default {
   input: 'src/js/noted.js',
   output: {
     file: 'dist/noted.js',
-    format: 'iife'
+    format: 'iife',
+    sourcemap: true
   },
 
   plugins: [

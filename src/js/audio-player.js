@@ -40,5 +40,9 @@ export default function AudioPlayer(id) {
     audio.classList.remove('no-show')
   }, streams.getStream('FileUpload', 'uploaded'))
 
+  flyd.on(e => {
+    audio.playbackRate = 1
+  }, streams.getStream('Controls', 'rateChanged'))
+
   return streams.getNamespace(ns)
 }

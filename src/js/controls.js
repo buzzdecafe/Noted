@@ -15,9 +15,10 @@ const toTime = (t) => {
   return `${timeFmt(mins, 2)}:${timeFmt(secs, 2)}.${timeFmt(ms, 3)}`
 }
 
-export default function Controls(id) {
+export default function Controls(_id) {
   const startStream = register('startMarked', flyd.stream())
   const endStream = register('endMarked', flyd.stream())
+  const rateChanged = register('rateChanged', flyd.stream())
 
   const markStart = document.getElementById('mark-start')
   markStart.addEventListener('click', startStream)
@@ -29,11 +30,14 @@ export default function Controls(id) {
 
   const currentTime = document.getElementById('current-time')
 
-  const audio = streams.getNamespace('AudioPlayer')
+  const playbackRate = document.getElementById('playback-rate')
+  playbackRate.addEventListener('change', rateChanged)
+
+  const audioStreams = streams.getNamespace('AudioPlayer')
 
   flyd.on(e => {
     currentTime.textContent = toTime(e.target.currentTime)
-  }, audio.timeupdate)
+  }, audioStreams.timeupdate)
 
   flyd.on(e => {
     markStartView.textContent = currentTime.textContent
