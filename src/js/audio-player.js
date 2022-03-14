@@ -1,11 +1,7 @@
 import flyd from 'flyd'
-import * as streams from './stream-register'
 
 
-const ns = 'AudioPlayer'
-const register = streams.register(ns)
-
-export default function AudioPlayer(id) {
+export default function AudioPlayer() {
   const audioEvts = [
     'audioprocess',
     'canplay',
@@ -29,20 +25,25 @@ export default function AudioPlayer(id) {
     'waiting'
   ]
 
-  const audio = document.getElementById(id)
-  audioEvts.forEach((evtName) => {
-    register(evtName, flyd.stream())
-    audio.addEventListener(evtName, streams.getStream(ns, evtName))
-  })
 
-  flyd.on(e => {
-    audio.src = URL.createObjectURL(e.target.files[0])
-    audio.classList.remove('no-show')
-  }, streams.getStream('FileUpload', 'uploaded'))
+  const streams = audioEvts.reduce((acc, evtName) => ({ ...acc, [evtName]: flyd.stream() }), {})
 
-  flyd.on(e => {
-    audio.playbackRate = 1
-  }, streams.getStream('Controls', 'rateChanged'))
+  return {
+    streams,
+    connect: (id, deps) => {
+      const audio = document.getElementById(id)
+      audioEvts.forEach((evtName) => {
+        audio.addEventListener(evtName, streams[evtName])
+      })
 
-  return streams.getNamespace(ns)
+      flyd.on(e => {
+        audio.src = URL.createObjectURL(e.target.files[0])
+        audio.classList.remove('no-show')
+      }, deps.file.streams.uploaded)
+
+      flyd.on(e => {
+        audio.playbackRate = parseFloat(e.target.value)
+      }, deps.controls.streams.rateChanged)
+    }
+  }
 }
