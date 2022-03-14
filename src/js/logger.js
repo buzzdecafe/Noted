@@ -1,5 +1,4 @@
 import flyd from 'flyd'
-import * as streams from './stream-register'
 
 
 const logStr = (type, body) => {
@@ -9,16 +8,23 @@ const logStr = (type, body) => {
 
 const log = console.log
 
-export default function Logger(id) {
-  flyd.on(e => {
-    log(logStr(e.type, e.originalTarget.id))
-  }, streams.getStream('FileUpload', 'uploaded'))
+export default function Logger() {
 
-  flyd.on(e => {
-    log(logStr(e.type, e.originalTarget.id))
-  }, streams.getStream('Controls', 'startMarked'))
+  return {
+    streams: {},
 
-  flyd.on(e => {
-    log(logStr(e.type, e.originalTarget.id))
-  }, streams.getStream('Controls', 'endMarked'))
+    connect: (_id, deps) => {
+      flyd.on(e => {
+        log(logStr(e.type, e.originalTarget.id))
+      }, deps.file.streams.uploaded)
+
+      flyd.on(e => {
+        log(logStr(e.type, e.originalTarget.id))
+      }, deps.controls.streams.startMarked)
+
+      flyd.on(e => {
+        log(logStr(e.type, e.originalTarget.id))
+      }, deps.controls.streams.endMarked)
+    }
+  }
 }

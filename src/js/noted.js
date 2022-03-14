@@ -5,10 +5,15 @@ import Logger from './logger'
 
 
 const onReady = () => {
-  FileUpload('tune-file')
-  AudioPlayer('audio')
-  Controls('controls')
-  Logger('logger-list')
+  const file = FileUpload()
+  const player = AudioPlayer()
+  const controls = Controls('controls')
+  const logger = Logger('logger-list')
+
+  file.connect('tune-file', {})
+  player.connect('audio', { file, controls })
+  controls.connect('controls', { player })
+  logger.connect('logger', { controls, file, player })
 }
 
 document.addEventListener('DOMContentLoaded', onReady);
