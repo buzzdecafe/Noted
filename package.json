@@ -4,7 +4,7 @@
   "description": "audio manipulation tool",
   "main": "server/index.js",
   "scripts": {
-    "build": "rollup -c && cp -Rp src/index.html src/css dist",
+    "build": "rollup -c && cp -Rp src/*.html src/css dist",
     "watch": "rollup -c -w"
   },
   "author": "Michael Hurley <mh@buzzdecafe.com>",
