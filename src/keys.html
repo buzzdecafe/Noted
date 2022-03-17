@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Random Keys</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    html,
+    body,
+    main {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #0b132b;
+      color: #b6e2e2;
+    }
+
+    main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #key {
+      font-size: 16rem;
+      letter-spacing: -4rem;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <main role="main">
+    <h1 id="key"></h1>
+  </main>
+  <script>
+    (function () {
+      const shuffle = (xs) => {
+        var len = xs.length;
+
+        while (len) {
+          const idx = Math.floor(Math.random() * len--);
+          const tmp = xs[len];
+          xs[len] = xs[idx];
+          xs[idx] = tmp;
+        }
+
+        return xs
+      }
+
+      const getKey = (function* keyGen() {
+        const keys = shuffle([
+          'A', 'B&flat;', 'B', 'C', 'D&flat;', 'D',
+          'E&flat;', 'E', 'F', 'G&flat;', 'G', 'A&flat;'
+        ])
+
+        for (let i = 0; i < keys.length; i = (i + 1) % 12) {
+          yield keys[i]
+        }
+      })()
+
+      const k = document.getElementById('key')
+
+      onClick = () => {
+        k.innerHTML = '&hellip;'
+        setTimeout(() => k.innerHTML = getKey.next().value, 250)
+      }
+
+      document.addEventListener('click', onClick)
+      onClick()
+    }())
+  </script>
+</body>
+
+</html>
