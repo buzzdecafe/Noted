@@ -1,4 +1,3 @@
-dist
 node_modules
 npm-debug.log
 tmp
@@ -36,3 +35,8 @@ Icon?
 ehthumbs.db
 Thumbs.db
 .directory
+
+# gh-pages ignore
+src
+package.json
+rollup.config.json
