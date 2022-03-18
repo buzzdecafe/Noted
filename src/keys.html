@@ -23,35 +23,48 @@
 
     #key {
       font-size: 16rem;
-      letter-spacing: -4rem;
       text-align: center;
+    }
+
+    #acc {
+      font-size: 12rem;
+      margin: 0 0 0 -2.5rem;
     }
   </style>
 </head>
 
 <body>
   <main role="main">
-    <h1 id="key"></h1>
+    <div id="key"></div>
+    <div id="acc"></div>
   </main>
   <script>
     (function () {
       const shuffle = (xs) => {
         var len = xs.length;
-
         while (len) {
           const idx = Math.floor(Math.random() * len--);
           const tmp = xs[len];
           xs[len] = xs[idx];
           xs[idx] = tmp;
         }
-
         return xs
       }
 
       const getKey = (function* keyGen() {
         const keys = shuffle([
-          'A', 'B&flat;', 'B', 'C', 'D&flat;', 'D',
-          'E&flat;', 'E', 'F', 'G&flat;', 'G', 'A&flat;'
+          { note: 'A', acc: '' },
+          { note: 'B', acc: '&#9837;' },
+          { note: 'B', acc: '' },
+          { note: 'C', acc: '' },
+          { note: 'D', acc: '&#9837;' },
+          { note: 'D', acc: '' },
+          { note: 'E', acc: '&#9837;' },
+          { note: 'E', acc: '' },
+          { note: 'F', acc: '' },
+          { note: 'G', acc: '&#9837;' },
+          { note: 'G', acc: '' },
+          { note: 'A', acc: '&#9837;' }
         ])
 
         for (let i = 0; i < keys.length; i = (i + 1) % 12) {
@@ -60,10 +73,16 @@
       })()
 
       const k = document.getElementById('key')
+      const a = document.getElementById('acc')
 
       onClick = () => {
         k.innerHTML = '&hellip;'
-        setTimeout(() => k.innerHTML = getKey.next().value, 250)
+        a.innerHTML = ''
+        setTimeout(() => {
+          const key = getKey.next()
+          k.innerHTML = key.value.note
+          a.innerHTML = key.value.acc
+        }, 250)
       }
 
       document.addEventListener('click', onClick)
