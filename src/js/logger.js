@@ -6,25 +6,38 @@ const logStr = (type, body) => {
   return `${now} :: ${type} :: ${body}`
 }
 
-const log = console.log
+window.onerror = flyd.stream()
+
+const logElem = elem => str => {
+  const li = document.createElement('li')
+  li.textContent = str
+  elem.appendChild(li)
+}
 
 export default function Logger() {
 
   return {
     streams: {},
 
-    connect: (_id, deps) => {
+    connect: (id, deps) => {
+      const elem = document.getElementById(id)
+      const log = logElem(elem)
+
       flyd.on(e => {
-        log(logStr(e.type, e.originalTarget.id))
+        log(logStr(e.type, e.target.id))
       }, deps.file.streams.uploaded)
 
       flyd.on(e => {
-        log(logStr(e.type, e.originalTarget.id))
+        log(logStr(e.type, e.target.id))
       }, deps.controls.streams.startMarked)
 
       flyd.on(e => {
-        log(logStr(e.type, e.originalTarget.id))
+        log(logStr(e.type, e.target.id))
       }, deps.controls.streams.endMarked)
+
+      flyd.on(e => {
+        log(logStr(e.type, e.target.id))
+      }, window.onerror)
     }
   }
 }

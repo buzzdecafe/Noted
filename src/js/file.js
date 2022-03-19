@@ -3,17 +3,26 @@ import filter from 'flyd/module/filter'
 
 
 export default function FileUpload() {
-  const fileChanged = flyd.stream()
+  const changed = flyd.stream()
+  const uploaded = filter(e => e.target && e.target.files && e.target.files.length === 1, changed)
 
   return {
     streams: {
-      changed: fileChanged,
-      uploaded: filter(e => e.target && e.target.files && e.target.files.length === 1, fileChanged)
+      changed,
+      uploaded,
     },
 
     connect: (id, _deps) => {
+      const fileSection = document.getElementById('load-file')
+      const overlay = document.getElementById('overlay')
       const uploadElem = document.getElementById(id)
-      uploadElem.addEventListener('change', fileChanged)
+
+      uploadElem.addEventListener('change', changed)
+
+      flyd.on(e => {
+        fileSection.classList.add('no-show')
+        overlay.classList.add('no-show')
+      }, uploaded)
     }
   }
 }

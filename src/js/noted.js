@@ -13,7 +13,7 @@ const onReady = () => {
   file.connect('tune-file', {})
   player.connect('audio', { file, controls })
   controls.connect('controls', { player })
-  logger.connect('logger', { controls, file, player })
+  logger.connect('logger-list', { controls, file, player })
 }
 
 document.addEventListener('DOMContentLoaded', onReady);
