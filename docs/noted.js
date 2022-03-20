@@ -996,9 +996,12 @@
 
   function AudioPlayer() {
     const audioEvts = ['audioprocess', 'canplay', 'canplaythrough', 'complete', 'durationchange', 'emptied', 'ended', 'loadeddata', 'loadedmetadata', 'pause', 'play', 'playing', 'ratechange', 'seeked', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting'];
-    const streams = audioEvts.reduce((acc, evtName) => ({ ...acc,
+    const evtStreams = audioEvts.reduce((acc, evtName) => ({ ...acc,
       [evtName]: lib.stream()
     }), {});
+    const streams = { ...evtStreams,
+      currentTime: lib.map(e => e.target.currentTime, evtStreams.timeupdate)
+    };
     return {
       streams,
       connect: (id, deps) => {
@@ -1013,6 +1016,14 @@
         lib.on(e => {
           audio.playbackRate = parseFloat(e.target.value);
         }, deps.controls.streams.rateChanged);
+        lib.on(e => {
+          audio.currentTime = deps.controls.streams.start();
+        }, streams.play);
+        lib.on(e => {
+          if (audio.currentTime > deps.controls.streams.end) {
+            audio.pause();
+          }
+        }, streams.timeupdate);
       }
     };
   }
@@ -1026,11 +1037,16 @@
     return `${timeFmt(mins, 2)}:${timeFmt(secs, 2)}.${timeFmt(ms, 3)}`;
   };
 
+  const isset = t => /^\d\d:\d\d.\d\d\d$/.test(t);
+
   function Controls() {
     const streams = {
       endMarked: lib.stream(),
       rateChanged: lib.stream(),
-      startMarked: lib.stream()
+      startMarked: lib.stream(),
+      start: lib.stream(),
+      end: lib.stream(),
+      state: lib.stream('controls:state:INIT')
     };
     return {
       streams,
@@ -1043,16 +1059,38 @@
         const markEndView = document.getElementById('mark-end-view');
         const currentTime = document.getElementById('current-time');
         const playbackRate = document.getElementById('playback-rate');
-        playbackRate.addEventListener('change', streams.rateChanged);
+        playbackRate.addEventListener('change', streams.rateChanged); // file events
+
+        lib.on(_e => {
+          currentTime.textContent = toTime(0);
+          markStartView.textContent = toTime(0);
+          streams.start(0);
+        }, deps.file.streams.uploaded); // player events
+
         lib.on(e => {
           currentTime.textContent = toTime(e.target.currentTime);
         }, deps.player.streams.timeupdate);
         lib.on(e => {
-          markStartView.textContent = currentTime.textContent;
+          markEndView.textContent = toTime(e.target.duration);
+        }, deps.player.streams.loadedmetadata); // internal events
+
+        lib.on(_e => {
+          const t = deps.player.streams.currentTime();
+          const tt = toTime(t);
+          const endMark = markEndView.textContent;
+
+          if (!isset(endMark) || tt < endMark) {
+            markStartView.textContent = tt;
+            streams.start(t);
+          }
         }, streams.startMarked);
         lib.on(e => {
-          if (currentTime.textContent > markStartView.textContent) {
-            markEndView.textContent = currentTime.textContent;
+          const t = deps.player.streams.currentTime();
+          const tt = toTime(t);
+
+          if (tt > markStartView.textContent) {
+            markEndView.textContent = tt;
+            streams.end(t);
           }
         }, streams.endMarked);
       }
@@ -1066,20 +1104,25 @@
   });
 
   function FileUpload() {
-    const fileChanged = lib.stream();
+    const changed = lib.stream();
+    const uploaded = filter(e => e.target && e.target.files && e.target.files.length === 1, changed);
     return {
       streams: {
-        changed: fileChanged,
-        uploaded: filter(e => e.target && e.target.files && e.target.files.length === 1, fileChanged)
+        changed,
+        uploaded
       },
       connect: (id, _deps) => {
+        const overlay = document.getElementById('overlay');
         const uploadElem = document.getElementById(id);
-        uploadElem.addEventListener('change', fileChanged);
+        uploadElem.addEventListener('change', changed);
+        lib.on(e => {
+          overlay.style.display = 'none';
+        }, uploaded);
       }
     };
   }
 
-  const logStr = (type, body) => {
+  const toLogStr = (type, body) => {
     const now = new Date().toLocaleString('en-US', {
       hour: '2-digit',
       hour12: false,
@@ -1090,20 +1133,46 @@
     return `${now} :: ${type} :: ${body}`;
   };
 
-  const log = console.log;
+  const errStream = lib.stream();
+  window.addEventListener('error', errStream);
+
+  const logElem = (elem, str) => {
+    const li = document.createElement('li');
+    li.textContent = str;
+    elem.appendChild(li);
+  };
+
+  const logEvent = elem => e => {
+    return typeof e === 'object' ? logElem(elem, toLogStr(e.type, e.target.id)) : logElem(elem, toLogStr('_app_', e));
+  };
+
+  const excludeEvents = ['currentTime', 'timeupdate'];
+
+  const toStreams = deps => {
+    return Object.entries(deps).flatMap(([_k, v]) => Object.entries(v.streams).filter(([k, _v]) => !excludeEvents.includes(k)).map(([_k, v]) => v));
+  };
+
   function Logger() {
     return {
       streams: {},
-      connect: (_id, deps) => {
+      connect: (id, deps) => {
+        const elem = document.getElementById(id);
+        const observer = new MutationObserver((mutationsList, _obsrvr) => {
+          for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') elem.scrollTop = elem.scrollHeight;
+          }
+        });
+        observer.observe(elem, {
+          childList: true
+        });
+        const log = logEvent(elem);
+        toStreams(deps).forEach(stream => {
+          lib.on(log, stream);
+        });
         lib.on(e => {
-          log(logStr(e.type, e.originalTarget.id));
-        }, deps.file.streams.uploaded);
-        lib.on(e => {
-          log(logStr(e.type, e.originalTarget.id));
-        }, deps.controls.streams.startMarked);
-        lib.on(e => {
-          log(logStr(e.type, e.originalTarget.id));
-        }, deps.controls.streams.endMarked);
+          debugger;
+          logElem(elem, toLogStr(e.type, e.target.id));
+        }, errStream);
       }
     };
   }
@@ -1119,9 +1188,10 @@
       controls
     });
     controls.connect('controls', {
+      file,
       player
     });
-    logger.connect('logger', {
+    logger.connect('logger-list', {
       controls,
       file,
       player
