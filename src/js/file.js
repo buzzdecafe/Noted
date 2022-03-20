@@ -13,15 +13,13 @@ export default function FileUpload() {
     },
 
     connect: (id, _deps) => {
-      const fileSection = document.getElementById('load-file')
       const overlay = document.getElementById('overlay')
       const uploadElem = document.getElementById(id)
 
       uploadElem.addEventListener('change', changed)
 
       flyd.on(e => {
-        fileSection.classList.add('no-show')
-        overlay.classList.add('no-show')
+        overlay.style.display = 'none'
       }, uploaded)
     }
   }

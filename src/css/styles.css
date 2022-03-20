@@ -7,7 +7,7 @@ html, body, main {
 
 input {
   padding: 1rem;
-  border: 1px solid #cccccc;
+  border: 2px solid #5d737e;
   border-radius: 1.5rem;
 }
 
@@ -46,6 +46,9 @@ input {
   height: 100%;
   z-index: 2;
   background-color: rgba(256, 256, 256, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -55,10 +58,11 @@ input {
   z-index: 3;
 }
 #load-file-form {
-  max-width: 85%;
+  max-width: 90%;
   height: 33%;
   text-align: center;
-  border: 1px solid yellow;
+  border: 0.5rem solid #5d737e;
+  border-radius: 1.5rem;;
   margin: auto;
   background-color: #0b132b;
   padding: 4rem 1rem;
@@ -69,6 +73,10 @@ input {
 }
 
 #logger {
+  margin: 0.5rem;
   outline: 1px solid red;
+}
+#logger-list {
+  height: 16rem;
   overflow-y: scroll;
 }

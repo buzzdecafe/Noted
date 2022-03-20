@@ -25,8 +25,11 @@ export default function AudioPlayer() {
     'waiting'
   ]
 
-
-  const streams = audioEvts.reduce((acc, evtName) => ({ ...acc, [evtName]: flyd.stream() }), {})
+  const evtStreams = audioEvts.reduce((acc, evtName) => ({ ...acc, [evtName]: flyd.stream() }), {})
+  const streams = {
+    ...evtStreams,
+    currentTime: flyd.map(e => e.target.currentTime, evtStreams.timeupdate)
+  }
 
   return {
     streams,
@@ -44,6 +47,16 @@ export default function AudioPlayer() {
       flyd.on(e => {
         audio.playbackRate = parseFloat(e.target.value)
       }, deps.controls.streams.rateChanged)
+
+      flyd.on(e => {
+        audio.currentTime = deps.controls.streams.start()
+      }, streams.play)
+
+      flyd.on(e => {
+        if (audio.currentTime > deps.controls.streams.end) {
+          audio.pause()
+        }
+      }, streams.timeupdate)
     }
   }
 }

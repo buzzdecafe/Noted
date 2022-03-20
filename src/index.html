@@ -4,6 +4,10 @@
 <head>
   <title>Noted</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="./css/styles.css" />
   <script src="./noted.js">
   </script>
@@ -12,16 +16,7 @@
 <body>
   <main role="main">
     <h1>Noted</h1>
-    <section id="load-file">
-      <form id="load-file-form">
-        <h2>
-          <label for="tune-file">Upload audio file</label>
-        </h2>
-        <div>
-          <input type="file" id="tune-file">
-        </div>
-      </form>
-    </section>
+
 
     <section id="player">
       <audio id="audio" class="no-show" controls>
@@ -74,7 +69,18 @@
     </section>
   </main>
 
-  <div class="overlay" id="overlay"></div>
+  <div class="overlay" id="overlay">
+    <section id="load-file">
+      <form id="load-file-form">
+        <h2>
+          <label for="tune-file">Upload audio file</label>
+        </h2>
+        <div>
+          <input type="file" id="tune-file">
+        </div>
+      </form>
+    </section>
+  </div>
 </body>
 
 </html>
