@@ -1,0 +1,82 @@
+html, body, main {
+  margin: 0;
+  padding: 0;
+  background-color: #0b132b;
+  color: #b6e2e2;
+}
+
+input {
+  padding: 1rem;
+  border: 2px solid #5d737e;
+  border-radius: 1.5rem;
+}
+
+.no-show {
+  display: none;  
+}
+
+.row-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.col-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.ctr-col-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.time-label {
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background-color: rgba(256, 256, 256, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* specifics */
+#load-file {
+  position: relative;
+  z-index: 3;
+}
+#load-file-form {
+  max-width: 90%;
+  height: 33%;
+  text-align: center;
+  border: 0.5rem solid #5d737e;
+  border-radius: 1.5rem;;
+  margin: auto;
+  background-color: #0b132b;
+  padding: 4rem 1rem;
+}
+
+#player {
+  text-align: center;
+}
+
+#logger {
+  margin: 0.5rem;
+  outline: 1px solid red;
+}
+#logger-list {
+  height: 16rem;
+  overflow-y: scroll;
+}
