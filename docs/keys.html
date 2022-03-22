@@ -63,22 +63,22 @@
         return xs
       }
 
-      const flip = () => Math.round(Math.random())
+      const flip = () => !!Math.round(Math.random())
 
       const getKey = (function* keyGen() {
         const keys = shuffle([
-          () => `./img/${flip() ? 'aflat' : 'gsharp'}.svg`,
-          () => './img/a.svg',
-          () => `./img/${flip() ? 'bflat' : 'asharp'}.svg`,
-          () => './img/b.svg',
-          () => './img/c.svg',
-          () => `./img/${flip() ? 'dflat' : 'csharp'}.svg`,
-          () => './img/d.svg',
-          () => `./img/${flip() ? 'eflat' : 'dsharp'}.svg`,
-          () => './img/e.svg',
-          () => './img/f.svg',
-          () => `./img/${flip() ? 'gflat' : 'fsharp'}.svg`,
-          () => './img/g.svg'
+          () => flip() ? 'aflat' : 'gsharp',
+          () => 'a',
+          () => flip() ? 'bflat' : 'asharp',
+          () => 'b',
+          () => 'c',
+          () => flip() ? 'dflat' : 'csharp',
+          () => 'd',
+          () => flip() ? 'eflat' : 'dsharp',
+          () => 'e',
+          () => 'f',
+          () => flip() ? 'gflat' : 'fsharp',
+          () => 'g'
         ])
 
         for (let i = 0; i < keys.length; i = (i + 1) % 12) {
@@ -87,16 +87,15 @@
       })()
 
       const k = document.getElementById('key')
-      const a = document.getElementById('acc')
+      k.onload = () => k.className = ''
 
       onClick = () => {
         k.className = 'blurry'
-        console.log(k.classList)
         setTimeout(() => {
           const key = getKey.next().value()
           k.alt = key
-          k.src = key
-          k.className = ''
+          k.src = `./img/${key}.svg`
+          k.className = 'blurry'
         }, 250)
       }
 
