@@ -87,16 +87,17 @@
       })()
 
       const k = document.getElementById('key')
-      const a = document.getElementById('acc')
 
       onClick = () => {
         k.className = 'blurry'
+        k.onload = null
         console.log(k.classList)
         setTimeout(() => {
           const key = getKey.next().value()
+          k.onload = () => k.className = ''
           k.alt = key
           k.src = key
-          k.className = ''
+          k.className = 'blurry'
         }, 250)
       }
 
