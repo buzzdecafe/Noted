@@ -15,8 +15,15 @@
       color: #b6e2e2;
     }
 
-    main {
+    .col {
       display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
     }
@@ -30,13 +37,18 @@
       font-size: 12rem;
       margin: 0 0 0 -2.5rem;
     }
+
+    .blurry {
+      filter: blur(24px);
+    }
   </style>
 </head>
 
 <body>
-  <main role="main">
-    <div id="key"></div>
-    <div id="acc"></div>
+  <main role="main" class="col">
+    <div class="row">
+      <img id="key" />
+    </div>
   </main>
   <script>
     (function () {
@@ -51,20 +63,22 @@
         return xs
       }
 
+      const flip = () => Math.round(Math.random())
+
       const getKey = (function* keyGen() {
         const keys = shuffle([
-          { note: 'A', acc: '' },
-          { note: 'B', acc: '&#9837;' },
-          { note: 'B', acc: '' },
-          { note: 'C', acc: '' },
-          { note: 'D', acc: '&#9837;' },
-          { note: 'D', acc: '' },
-          { note: 'E', acc: '&#9837;' },
-          { note: 'E', acc: '' },
-          { note: 'F', acc: '' },
-          { note: 'G', acc: '&#9837;' },
-          { note: 'G', acc: '' },
-          { note: 'A', acc: '&#9837;' }
+          () => `./img/${flip() ? 'aflat' : 'gsharp'}.svg`,
+          () => './img/a.svg',
+          () => `./img/${flip() ? 'bflat' : 'asharp'}.svg`,
+          () => './img/b.svg',
+          () => './img/c.svg',
+          () => `./img/${flip() ? 'dflat' : 'csharp'}.svg`,
+          () => './img/d.svg',
+          () => `./img/${flip() ? 'eflat' : 'dsharp'}.svg`,
+          () => './img/e.svg',
+          () => './img/f.svg',
+          () => `./img/${flip() ? 'gflat' : 'fsharp'}.svg`,
+          () => './img/g.svg'
         ])
 
         for (let i = 0; i < keys.length; i = (i + 1) % 12) {
@@ -76,12 +90,13 @@
       const a = document.getElementById('acc')
 
       onClick = () => {
-        k.innerHTML = '&hellip;'
-        a.innerHTML = ''
+        k.className = 'blurry'
+        console.log(k.classList)
         setTimeout(() => {
-          const key = getKey.next()
-          k.innerHTML = key.value.note
-          a.innerHTML = key.value.acc
+          const key = getKey.next().value()
+          k.alt = key
+          k.src = key
+          k.className = ''
         }, 250)
       }
 
