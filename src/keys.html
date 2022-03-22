@@ -87,14 +87,12 @@
       })()
 
       const k = document.getElementById('key')
+      k.onload = () => k.className = ''
 
       onClick = () => {
         k.className = 'blurry'
-        k.onload = null
-        console.log(k.classList)
         setTimeout(() => {
           const key = getKey.next().value()
-          k.onload = () => k.className = ''
           k.alt = key
           k.src = `./img/${key}.svg`
           k.className = 'blurry'
