@@ -1,0 +1,11 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+	<title>keys</title>
+	<style>
+		tspan { white-space:pre } 
+		.t0 { font-size: 250px;fill: #b6e2e2;font-weight: 400;font-family: "DejaVuSans", "DejaVu Sans" } 
+	</style>
+	<text id="E♭" style="transform: matrix(1,0,0,1,148,241)" >
+		<tspan x="-137.9" y="0" class="t0">E</tspan><tspan  y="0" class="t0">♭
+</tspan>
+	</text>
+</svg>
